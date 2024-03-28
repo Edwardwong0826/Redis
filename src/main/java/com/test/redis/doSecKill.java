@@ -9,16 +9,28 @@ import java.util.List;
 public class doSecKill
 {
 
-    // redis distributed lock features
+    // Redis distributed lock features
     // 1. mutual exclusion
     // 2. no dead lock
     // 3. fault tolerance - if old master node is down, the lock information is not replicate to slave node then slave node promote to new master node
     // 4. add lock and delete lock need to be same client/server
     // 5. lock cannot expire itself when normal operating
     // if we use watch, multi(transaction), UUID and lua script(to ensure atomicity operation) we can have 1,2,4 feature and solve oversold and 库存遗留问题
+
     // Reddison is a redis Java client with features of In-Memory Data Grid can do above all, inside also use LUA script, with features like
     // 可重入锁（Reentrant Lock）、公平锁（Fair Lock、联锁（MultiLock）、 红锁（RedLock）、 读写锁（ReadWriteLock）等
     // by using Reddison, we can have feature 3(using RedLock) and 5(watchdog to auto extend lock expire time when not set)
+    // Red Lock is one of the distributed lock algorithm. and Reddison got implement it and called Redisson RedLock
+    // https://juejin.cn/post/6983988197420171278, based on this article is not recommend to use Redisson RedLock
+    // and from the Github Reddison documentation https://github.com/redisson/redisson/wiki/8.-Distributed-locks-and-synchronizers#81-lock
+    // The RedLock is deprecated, use RLock or RFencedLock instead
+
+    // Reddison is written in Java, so it supports
+    // Distributed Java objects, Distributed Java collections. Distributed Java locks and synchronizers
+    // https://github.com/redisson/redisson?tab=readme-ov-file and many framework so on
+
+    // for single instance / node distributed lock - in this case redis, just use Reddison
+    // for cluster distributed lock can consider use other RedLock version implementation, ZooKeeper etc
     public static void getConnection()
     {
         JedisShardInfo shardInfo = new JedisShardInfo("127.0.0.1",6379);
